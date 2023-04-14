@@ -138,7 +138,12 @@ public class CordovaCall extends CordovaPlugin {
             } else {
                 conn.setActive();
                 Intent intent = new Intent(this.cordova.getActivity().getApplicationContext(), this.cordova.getActivity().getClass());
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                int flag = 0;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    flag = phoneIntent.FLAG_MUTABLE;
+                }
+                phoneIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | flag);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP | flag);
                 this.cordova.getActivity().getApplicationContext().startActivity(intent);
                 this.callbackContext.success("Call connected successfully");
             }
@@ -242,7 +247,11 @@ public class CordovaCall extends CordovaPlugin {
             } else {
                 if(permissionCounter == 2) {
                     Intent phoneIntent = new Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS);
-                    phoneIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    int flag = 0;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        flag = phoneIntent.FLAG_MUTABLE;
+                    }
+                    phoneIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | flag);
                     this.cordova.getActivity().getApplicationContext().startActivity(phoneIntent);
                 } else {
                     this.callbackContext.error("You need to accept phone account permissions in order to send and receive calls");
